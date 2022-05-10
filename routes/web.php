@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GameController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,7 +13,18 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 Route::get('/', function () {
+    return redirect('/game');
+});
+
+Route::get('/game', function () {
     return view('game');
 });
+
+Route::post('/new-game', [GameController::class, 'newGame']);
+
+Route::post('/check/{guess}', [GameController::class, 'checkNumber']);
+
+Route::get('/give-up', [GameController::class, 'giveUp']);
+
+Route::get('/get-top/{category}', [GameController::class, 'getTop']);
