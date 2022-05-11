@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
 
@@ -18,8 +17,10 @@ class GameController extends Controller
         }
         session(['name' => $name]);
         session()->forget(['tries', 'generatedNumber', 'time']);
+
         $this->generateNumber();
-        return response()->json(['success' => 'The name have been submitted successfully']);
+
+        return response()->json(['success' => 'The name have been submitted successfully', 'name' => $name]);
     }
 
     private function generateNumber()
@@ -62,7 +63,7 @@ class GameController extends Controller
                 }
             }
         }
-        return response(['bulls' => $bulls, 'cows' => $cows, 'tries' => session('tries'), '$generatedNumber' => $generatedNumber]);
+        return response(['bulls' => $bulls, 'cows' => $cows, 'tries' => session('tries')]);
     }
 
     public function giveUp()
@@ -72,7 +73,7 @@ class GameController extends Controller
         return $number;
     }
 
-    private function addTop10( $current)
+    private function addTop10($current)
     {
         if ($current->tries) {
             $this->generateTop10('top-tries.json', 'tries', 'time', $current);
