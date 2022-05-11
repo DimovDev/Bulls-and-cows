@@ -15,8 +15,9 @@ function newGame() {
         success: function () {
             $('#play-game').removeClass('d-none');
             $('#enter-name').hide();
+            $('#player-name').append(name);
             startTime = Date.now();
-        },
+            },
         error: function (response) {
             $('#nameError').text(response.responseText);
         }
@@ -24,7 +25,7 @@ function newGame() {
 }
 
 function guessNumber() {
-    let number = parseInt($('#guess').val()) || 0;
+    let number = $('#guess').val() || 0;
     let guessTime = Date.now() - startTime;
     $.ajax({
         type: "POST",
@@ -60,7 +61,6 @@ function giveUp() {
         type: "GET",
         dataType: "JSON",
         url: 'give-up',
-
         success: function (response) {
             number = response;
             let notice = document.createElement('div');
@@ -88,9 +88,7 @@ function getTop(category) {
         type: "GET",
         dataType: "JSON",
         url: 'get-top/' + category,
-
         success: function (response) {
-            console.log(response)
             let i = 1;
             for (let item of response) {
                 let time = new Date(parseInt(item.time)).toISOString().slice(11,19);
