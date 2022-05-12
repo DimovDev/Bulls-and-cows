@@ -2,12 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
 
 class GameController extends Controller
 {
+    /**
+     * Start new game
+     *
+     * @return Application|ResponseFactory|JsonResponse|Response
+     */
     public function newGame(Request $request)
     {
         $name = $request->input('name') ? $request->input('name') : session('name');
@@ -23,6 +32,11 @@ class GameController extends Controller
         return response()->json(['success' => 'The name have been submitted successfully', 'name' => $name]);
     }
 
+    /**
+     * Generate random 4 numbers string
+     *
+     * @return void
+     */
     private function generateNumber()
     {
         $generated = implode(array_rand(array_flip(range(0, 9)), 4));
@@ -32,6 +46,13 @@ class GameController extends Controller
         session(['generatedNumber' => $generatedNumber, 'tries' => 0]);
     }
 
+    /**
+     * Check guess
+     *
+     * @param $guess
+     *
+     * @return Application|ResponseFactory|Response
+     */
     public function checkNumber($guess)
     {
         $generatedNumber = session('generatedNumber');
@@ -66,6 +87,11 @@ class GameController extends Controller
         return response(['bulls' => $bulls, 'cows' => $cows, 'tries' => session('tries')]);
     }
 
+    /*
+     * Give Up
+     *
+     * @return string
+     */
     public function giveUp()
     {
         $number = session('generatedNumber');
@@ -73,6 +99,13 @@ class GameController extends Controller
         return $number;
     }
 
+    /*
+     * Add player to top 10
+     *
+     * @param $current
+     *
+     * @return void
+     */
     private function addTop10($current)
     {
         if ($current->tries) {
@@ -83,6 +116,13 @@ class GameController extends Controller
         }
     }
 
+    /*
+     * Save palyer in storage
+     *
+     * @params $filename, $keyname1, $keyname2, $current
+     *
+     * @return void
+     */
     private function generateTop10($filename, $keyname1, $keyname2, $current)
     {
         $json = Storage::get($filename);
@@ -118,6 +158,13 @@ class GameController extends Controller
         Storage::put($filename, $json);
     }
 
+    /*
+     * Get top 10 players from storage
+     *
+     * @param $category
+     *
+     * @return json
+     */
     public function getTop($category)
     {
         switch ($category) {
@@ -133,6 +180,13 @@ class GameController extends Controller
         return $json;
     }
 
+    /*
+     * Add custom rules for digit 1, 8, 4, 5 positions
+     *
+     * @param $generated
+     *
+     * return string
+     */
     private function customLimitation(string $generated)
     {
         $generatedNumber = str_split($generated);

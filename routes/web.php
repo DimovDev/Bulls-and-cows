@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::get('/', function () {
-    return redirect('/game');
+    return view('game');
 });
 
 Route::get('/game', function () {
